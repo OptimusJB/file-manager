@@ -138,15 +138,39 @@ class Save:
             texte_code = texte_code[1:]
         return texte_final
 
-    def sauvegarder(self, texte, chemin_fichier):
+    def sauvegarder_stockages(self):
+        import data
+
+        texte = ""
+        for stockage in data.stockages:
+            texte = texte + str(stockage.type) + "&slattr&" + str(stockage.chemin) + "&slattr&" + str(stockage.ip_serveur) + "&slattr&" + str(stockage.port_serveur) + "&slstockage&"
+        texte = texte[:len(texte) - len("&slstockage&")]
         texte = self.chiffrer(texte)
-        fichier = open(chemin_fichier, "w")
+        fichier = open("data/&stockages&", "w") # &stockages& doit être un nom de fichier interdit
         fichier.write(texte)
         fichier.close()
 
-    def charger(self, chemin_fichier):
-        fichier = open(chemin_fichier, "r")
+    def charger_stockages(self):
+        import data
+        from Stockage import Stockage
+        data.stockages = []
+
+        fichier = open("data/&stockages&", "r")
         fichier_read = fichier.read()
         fichier.close()
         fichier_read = self.dechiffrer(fichier_read)
-        return fichier_read
+
+        if fichier_read == "":
+            return None
+
+        for stockage in fichier_read.split("&slstockage&"):
+            stockages_specs = stockage.split("&slattr&")
+
+            for avancement in range(len(stockages_specs)):
+                if stockages_specs[avancement] == "None":
+                    stockages_specs[avancement] = None
+
+            new_stockage = Stockage(stockages_specs[0], stockages_specs[1], stockages_specs[2], stockages_specs[3])
+            data.stockages.append(new_stockage)
+
+save = Save()

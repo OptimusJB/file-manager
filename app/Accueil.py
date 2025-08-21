@@ -2,12 +2,13 @@ import sys
 from Screen import resize_screen
 from StorageListView import storage_list_view
 import data
+from Notification import notification
 import pygame
 pygame.init()
 class Accueil:
     def __init__(self, state_manager):
         self.state_manager = state_manager
-        self.working_elements = [storage_list_view]
+        self.working_elements = [storage_list_view, notification]   # notification doit être en dernier
         data.focused = True
 
     def run(self):

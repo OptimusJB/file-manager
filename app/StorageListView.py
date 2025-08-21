@@ -1,6 +1,9 @@
 from Screen import resize_screen
 import pygame
 import PCthings
+from Stockage import Stockage
+from Save import save
+from Notification import notification
 import data
 pygame.init()
 
@@ -50,11 +53,14 @@ class StorageListView:
         self.rects_stockages = []
         self.y = 130
         for stockage in data.stockages:
-            texte_stockage = stockage
+            texte_stockage = stockage.chemin
             if len(texte_stockage) > 18:
                 texte_stockage = texte_stockage[:18] + "..."
 
-            bouton_stockage = self.create_button(texte_stockage)
+            color_exist = "grey15"
+            if not stockage.exists:
+                color_exist = "red"
+            bouton_stockage = self.create_button(texte_stockage, color_exist)
             bouton_stockage[1].midtop = (self.dimensions_rect.centerx, self.y + self.y_offset)
             resize_screen.blit(bouton_stockage[0], bouton_stockage[1].topleft)
             self.rects_stockages.append(bouton_stockage[1])
@@ -73,14 +79,35 @@ class StorageListView:
                 if self.new_stockage[1].collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                     chemin_dossier = PCthings.ask_dir()
                     if chemin_dossier:
-                        if not chemin_dossier in data.stockages:
+                        # test de si le chemin est déjà présent
+                        found = False
+                        for stockage in data.stockages:
+                            if stockage.chemin == chemin_dossier:
+                                found = True
+                                break
+
+                        if not found:
                             # ajout du nouveau stockage
-                            data.stockages.append(chemin_dossier)
+                            data.stockages.append(Stockage("local", chemin_dossier))
+
+                            # sauvegarde
+                            save.sauvegarder_stockages()
+
+                            # ajout de la notif
+                            notification.add_notif("stockage ajouté")
+                        else:
+                            notification.add_notif("ce stockage existe déjà")
 
             elif event.button == 3:
                 for rect_stockage in self.rects_stockages:
                     if rect_stockage.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                         index_rect = self.rects_stockages.index(rect_stockage)
                         data.stockages.pop(index_rect)
+
+                        # sauvegarde
+                        save.sauvegarder_stockages()
+
+                        # ajout de la notif
+                        notification.add_notif("stockage supprimé")
 
 storage_list_view = StorageListView()

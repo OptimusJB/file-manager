@@ -17,6 +17,12 @@ class Screen:
         self.saves = {}
         self.active_eco = True  # si True, l'écran ne se met pas à jour quand la fenêtre est minimisée
 
+        # pour récupérer la dernière frame, faire load_screen("last frame")
+        self.save_last_frame = True # si True, sauvegarde la dernière frame avec save_screen() pendant le flip
+
+    def set_save_last_frame(self, choix:bool):
+        self.save_last_frame = choix
+
     def set_mode(self, dimensions, flag=None):
         """
         mise en place du screen d'affichage
@@ -48,6 +54,9 @@ class Screen:
         if not pygame.display.get_active() and self.active_eco:
             #print("pas de flip")
             return None
+
+        if self.save_last_frame:
+            self.save_screen("last frame")
 
         infos = pygame.display.Info()
         new_surface = pygame.transform.smoothscale(self.screen_calcul, (infos.current_w, infos.current_h))

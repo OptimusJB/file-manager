@@ -1,5 +1,8 @@
+import os
+
 from Accueil import Accueil
 from Screen import resize_screen
+from Save import save
 import pygame
 pygame.init()
 
@@ -14,6 +17,11 @@ class State:
         dimensions = pygame.display.get_desktop_sizes()[0]
         resize_screen.set_mode((dimensions[0] * 0.6, dimensions[1] * 0.6), pygame.RESIZABLE)
 
+        # chargement des stockages
+        if "&stockages&" in os.listdir("data"):
+            save.charger_stockages()
+
+        # boucle logiciel
         while True:
             self.states[self.state_actuel](self).run()
 

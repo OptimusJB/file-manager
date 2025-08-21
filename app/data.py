@@ -1,2 +1,2 @@
-stockages = [] # liste de str avec les chemins vers les dossiers de stockage
+stockages = [] # liste d'objets stockages
 focused = True
