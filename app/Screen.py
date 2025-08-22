@@ -19,6 +19,7 @@ class Screen:
 
         # pour récupérer la dernière frame, faire load_screen("last frame")
         self.save_last_frame = True # si True, sauvegarde la dernière frame avec save_screen() pendant le flip
+        self.save_screen("last frame")
 
     def set_save_last_frame(self, choix:bool):
         self.save_last_frame = choix

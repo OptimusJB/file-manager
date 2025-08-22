@@ -1,4 +1,5 @@
 import PCthings
+from Client import Client
 class Stockage:
     def __init__(self, type, chemin=None, ip_serveur=None, port_serveur=None):
         """
@@ -19,3 +20,9 @@ class Stockage:
         if self.type == "local":
             if PCthings.is_dir_exists(self.chemin):
                 self.exists = True
+        elif self.type == "serveur":
+            resultat = Client(self.ip_serveur, self.port_serveur).envoyer(["check exist", self.chemin]) == "trouvé"
+            if resultat == ["trouvé"]:
+                self.exists = True
+        else:
+            raise ValueError("pb avec self.type")

@@ -143,6 +143,11 @@ class Save:
 
         texte = ""
         for stockage in data.stockages:
+            # test s'il y a des mots interdits
+            for element in [stockage.chemin, stockage.ip_serveur, stockage.port_serveur]:
+                assert not "&slattr&" in str(element), "&slattr& est interdit"
+                assert not "&slstockage&" in str(element), "&slstockage& est interdit"
+
             texte = texte + str(stockage.type) + "&slattr&" + str(stockage.chemin) + "&slattr&" + str(stockage.ip_serveur) + "&slattr&" + str(stockage.port_serveur) + "&slstockage&"
         texte = texte[:len(texte) - len("&slstockage&")]
         texte = self.chiffrer(texte)
